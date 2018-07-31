@@ -30,12 +30,17 @@ class UsersLoginTest < ActionDispatch::IntegrationTest
     delete logout_path
     assert_not is_logged_in?
     assert_redirected_to root_url
+    delete logout_path #2番目のウィンドウでログアウトをクリックするユーザーを趣味レートする
     follow_redirect!
     assert_select "a[href=?]", login_path
     assert_select "a[href=?]", logout_path,      count: 0
     assert_select "a[href=?]", user_path(@user), count: 0
   end
   
-  
+  test "login with remembering" do
+    log_in_as(@user,remember_me:'1')
+    assert_not_empty cookies['remember_token'] #cookiesが空でない場合にtrueつまり永久ログインが有効
+  end
+
   
 end
