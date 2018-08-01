@@ -10,6 +10,10 @@ module SessionsHelper
     cookies.permanent[:remember_token] = user.remember_token
   end
   
+  def current_user?(user)
+    user==current_user
+  end
+  
   def current_user  
     if (user_id = session[:user_id])            #if ユーザーidにユーザーidセッション(一時的なログイン)を代入しidセッションが存在すれば true。
       @current_user||=User.find_by(id: user_id) #current_userにインスタンス変数を代入するメソッドを定義している。インスタンス変数が空であれば代入
@@ -39,4 +43,17 @@ module SessionsHelper
     session.delete(:user_id)
     @current_user = nil
   end
+  
+  # 記憶したURL (もしくはデフォルト値) にリダイレクト
+  def redirect_back_or(default)
+    redirect_to(session[:forwarding_url] || default)  #session[:forwarding]がnilで無ければそのページを返し、そうでなければデフォルトページを返す
+    session.delete(:forwarding_url)
+  end
+
+  # アクセスしようとしたURLを覚えておく
+  def store_location
+    session[:forwarding_url] = request.original_url if request.get? 
+    #リクエストが送られたurlをsession変数のforwardingキーに格納している。request.original_urlでリクエスト先が取得できる
+  end
+  
 end
