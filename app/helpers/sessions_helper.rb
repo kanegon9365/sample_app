@@ -20,7 +20,7 @@ module SessionsHelper
     elsif (user_id = cookies.signed[:user_id])  #ifでなければ、ユーザidにクッキーを用いた永続ログインを代入しあればtrue
      
       user = User.find_by(id: user_id)          #userにデーターベースから永続ログインされたidを代入
-      if user && user.authenticated?(cookies[:remember_token])  #idが存在しandクッキーに記憶トークンがあればtrue
+      if user && user.authenticated?(:remember, cookies[:remember_token])  #idが存在しandクッキーに記憶トークンがあればtrue
         log_in user                             #永続ログインのユーザーでログインする
        @current_user = user
       end
